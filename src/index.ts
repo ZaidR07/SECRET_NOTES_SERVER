@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import userrouter from "./Routers/user";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ app.use(
     parameterLimit: 50000,
   })
 );
+
+app.use(cookieParser());
 
 app.use(
   cors({

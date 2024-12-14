@@ -1,49 +1,60 @@
 import bcrypt from 'bcrypt';
-import { prisma } from "./db";
-import { Request , Response } from "express";
+import { prisma } from '../db';
+import { Request, Response } from 'express';
+import { createtoken } from '../Middlewares/auth';
 
-
-
-
-export const Login = async ( req : Request , res : Response) : Promise<void> => {
-    console.log("login Tiggered");
-    
-}
-
-const checkexisting = async (username : string) => {
+const checkexisting = async (username: string) => {
     return await prisma.user.findFirst({ where: { username } });
-}
+};
 
+export const Login = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { username, password } = req.body;
 
-export const Register = async ( req : Request , res : Response ) : Promise<void> => {
-    console.log("Register");
-    
-    const { username , password }  =  req.body;
+        const user = await checkexisting(username);
+        if (!user) {
+            res.status(404).json({ success: false, message: "Incorrect Username" });
+            return;
+        }
 
-    const user = await checkexisting(username);
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            res.status(400).json({ success: false, message: "Incorrect Password" });
+            return;
+        }
 
-    if(user){
-        res.status(400).json({
-            message : "User Already Exists"
-        })
-        return
+        const token = await createtoken({ id: user.id, username: user.username, email: user.email });
+        res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000});
+        res.status(200).json({ message: "Login Successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
+};
 
-    const hashedpassword = await bcrypt.hash(password , 10);
+export const Register = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { username, password, email } = req.body;
 
-    const registration =  await prisma.user.create({data : {username : username , password : hashedpassword}})
+        const user = await checkexisting(username);
+        if (user) {
+            res.status(400).json({ success: false, message: "User Already Exists" });
+            return;
+        }
 
-    if(!registration){
-        res.status(500).json({
-            message : "Internal Server Error"
-        })
-        return
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const registration = await prisma.user.create({
+            data: { email, username, password: hashedPassword },
+        });
+
+        if (!registration) {
+            res.status(500).json({ success: false, message: "Internal Server Error" });
+            return;
+        }
+
+        res.status(200).json({ success: true, message: "Registered Successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-
-    res.status(200).json({
-        message : "Registered Successfully"
-    })
-
-
-    
-}
+};
