@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { Request , Response , NextFunction } from "express";
 
 const KEY = process.env.SECRETKEY;
 
@@ -14,12 +15,19 @@ export const createtoken = (user: object): string => {
   }
 };
 
-export const verifytoken = (token: string): boolean => {
+export const verifyTokenMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    console.error("No token provided.");
+    return res.redirect("/login"); // Redirect if token is missing
+  }
+
   try {
     jwt.verify(token, KEY);
-    return true;
-  } catch (error : any) {
+    next(); // Token is valid, proceed to the controller
+  } catch (error: any) {
     console.error("Token verification failed:", error.message);
-    return false;
+    return res.redirect("/login"); // Redirect if token is invalid
   }
 };

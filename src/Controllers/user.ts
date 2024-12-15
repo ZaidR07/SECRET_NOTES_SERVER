@@ -52,6 +52,7 @@ export const Register = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
+      
         res.status(200).json({ success: true, message: "Registered Successfully" });
     } catch (error) {
         console.error(error);
