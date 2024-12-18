@@ -24,7 +24,8 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
         }
 
         const token = await createtoken({ id: user.id, username: user.username, email: user.email });
-        res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000});
+        res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000 , sameSite: "lax"
+        });
         res.status(200).json({ message: "Login Successfully" });
     } catch (error) {
         console.error(error);

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import userrouter from "./Routers/user";
+import notesrouter from "./Routers/notes";
 import cookieParser from "cookie-parser";
 
 
@@ -31,7 +32,7 @@ app.use(
 );
 
 // Use the user router with a base path
-app.use("/api", userrouter);
+app.use(userrouter , notesrouter);
 
 try {
   app.listen(PORT, () => {
