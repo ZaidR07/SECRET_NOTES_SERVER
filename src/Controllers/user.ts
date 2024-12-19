@@ -35,6 +35,8 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const Register = async (req: Request, res: Response): Promise<void> => {
+    console.log("Request Came for Register");
+    
     try {
         const { username, password, email } = req.body;
 
