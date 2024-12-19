@@ -18,14 +18,29 @@ export const Createnotes = async (
     });
 
     if (!creationstatus) {
+     
       res.status(400).json({
         message: "Creation Unsucessful",
+       
       });
       return;
     }
 
+    const retrievednotes = await prisma.notes.findMany({
+      where : {userid: decodedtoken.id}
+    })
+
+    if(!retrievednotes){
+      res.status(200).json({
+        message: "Creation Sucessful",
+        notes : null 
+      });
+    }
+
     res.status(200).json({
       message: "Creation Sucessful",
+      notes : retrievednotes
+
     });
   } catch (error) {
     // logger.error(error)
