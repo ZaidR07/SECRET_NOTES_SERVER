@@ -36,9 +36,13 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true, // Prevents client-side scripts from accessing the cookie
       secure: true, // Ensures the cookie is sent over HTTPS only
-      sameSite: "none",
-      path: "/",
+      sameSite: "none", // Required for cross-origin cookies
+      path: "/", // Makes the cookie accessible to all routes
     });
+
+    // Debugging: Log headers to confirm Set-Cookie is present
+    console.log("Response Headers:", res.getHeaders());
+
     res.status(200).json({ message: "Login Successfully" });
   } catch (error) {
     console.log(error);
