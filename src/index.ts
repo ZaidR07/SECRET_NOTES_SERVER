@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: true, // Allow all origins
+    origin: ['https://secret-note.vercel.app'], // Allow all origins
     credentials: true,
   })
 );
