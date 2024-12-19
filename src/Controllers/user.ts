@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../db';
 import { Request, Response } from 'express';
 import { createtoken } from '../Middlewares/auth';
+import { logger } from '../logger';
 
 const checkexisting = async (username: string) => {
     return await prisma.user.findFirst({ where: { username } });
@@ -28,7 +29,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
         });
         res.status(200).json({ message: "Login Successfully" });
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
@@ -57,6 +58,9 @@ export const Register = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({ success: true, message: "Registered Successfully" });
     } catch (error) {
         console.error(error);
+        logger.error(error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
+
