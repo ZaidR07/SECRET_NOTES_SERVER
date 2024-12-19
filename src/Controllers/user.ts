@@ -9,6 +9,8 @@ const checkexisting = async (username: string) => {
 };
 
 export const Login = async (req: Request, res: Response): Promise<void> => {
+    console.log("Login Triggered");
+    
     try {
         const { username, password } = req.body;
 
