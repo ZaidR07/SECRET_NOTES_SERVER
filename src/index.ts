@@ -31,7 +31,7 @@ app.use(
   })
 );
 
-app.use("/", () => console.log("Hit"))
+
 
 // Use the user router with a base path
 app.use(userrouter , notesrouter);
