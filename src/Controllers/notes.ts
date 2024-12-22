@@ -18,29 +18,26 @@ export const Createnotes = async (
     });
 
     if (!creationstatus) {
-     
       res.status(400).json({
         message: "Creation Unsucessful",
-       
       });
       return;
     }
 
     const retrievednotes = await prisma.notes.findMany({
-      where : {userid: decodedtoken.id}
-    })
+      where: { userid: decodedtoken.id },
+    });
 
-    if(!retrievednotes){
+    if (!retrievednotes) {
       res.status(200).json({
         message: "Creation Sucessful",
-        notes : null 
+        notes: null,
       });
     }
 
     res.status(200).json({
       message: "Creation Sucessful",
-      notes : retrievednotes
-
+      notes: retrievednotes,
     });
   } catch (error) {
     // logger.error(error)
@@ -64,8 +61,6 @@ export const getnotes = async (req: Request, res: Response) => {
       },
     });
 
-    
-
     if (retrievestatus) {
       res.status(200).json({
         notes: retrievestatus,
@@ -76,6 +71,31 @@ export const getnotes = async (req: Request, res: Response) => {
     res.status(400);
   } catch (error) {
     res.status(500);
+  }
+};
 
+export const deletenote = async (req: Request, res: Response) => {
+  try {
+    const id = req.body.id;
+    const deletestatus = await prisma.notes.delete({
+      where: { id: id },
+    });
+
+    if (!deletestatus) {
+      res.status(400).json({
+        message: "Unable to delete",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Deletion Successfull",
+      id: deletestatus.id,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Server Error",
+    });
+    return;
   }
 };

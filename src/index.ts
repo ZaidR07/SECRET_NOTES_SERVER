@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ['https://secretnotes.vercel.app'], // Allow all origins
+    origin: ['https://secretnotes.vercel.app','http://localhost:5173'], // Allow all origins
     credentials: true,
   })
 );

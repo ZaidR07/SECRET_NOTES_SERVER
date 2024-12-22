@@ -40,8 +40,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
       path: "/", // Makes the cookie accessible to all routes
     });
 
-    // Debugging: Log headers to confirm Set-Cookie is present
-    console.log("Response Headers:", res.getHeaders());
+
 
     res.status(200).json({ message: "Login Successfully" });
   } catch (error) {
