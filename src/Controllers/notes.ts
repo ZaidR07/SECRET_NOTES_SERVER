@@ -19,7 +19,7 @@ export const Createnotes = async (
         userid: decodedtoken.id,
         title: title,
         text: text,
-        favourite: false,
+        favourite : false
       },
     });
 
@@ -46,7 +46,7 @@ export const Createnotes = async (
       notes: retrievednotes,
     });
   } catch (error) {
-    // logger.error(error)
+    logger.error(error)
     console.log(error);
 
     res.status(400).json({
