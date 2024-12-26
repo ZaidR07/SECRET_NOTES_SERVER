@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../db";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { logger } from "../logger";
 // import { logger } from "../logger";
 
 export const Createnotes = async (
@@ -14,7 +15,12 @@ export const Createnotes = async (
     const decodedtoken = jwt.decode(token) as JwtPayload;
 
     const creationstatus = await prisma.notes.create({
-      data: { userid: decodedtoken.id, title: title, text: text },
+      data: {
+        userid: decodedtoken.id,
+        title: title,
+        text: text,
+        favourite: false,
+      },
     });
 
     if (!creationstatus) {
@@ -71,6 +77,66 @@ export const getnotes = async (req: Request, res: Response) => {
     res.status(400);
   } catch (error) {
     res.status(500);
+  }
+};
+
+export const like = async (req: Request, res: Response) => {
+  try {
+    const id = req.body.id;
+    const updatestatus = await prisma.notes.update({
+      where: { id: id },
+      data: {
+        favourite: true,
+      },
+    });
+
+    if (!updatestatus) {
+      res.status(400).json({
+        message: "Update failed",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Note updated successfully",
+      note: updatestatus,
+    });
+  } catch (error) {
+    logger.error(error);
+
+    res.status(400).json({
+      message: "Update failed",
+    });
+  }
+};
+
+export const unlike = async (req: Request, res: Response) => {
+  try {
+    const id = req.body.id;
+    const updatestatus = await prisma.notes.update({
+      where: { id: id },
+      data: {
+        favourite: false,
+      },
+    });
+
+    if (!updatestatus) {
+      res.status(400).json({
+        message: "Update failed",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Note updated successfully",
+      note: updatestatus,
+    });
+  } catch (error) {
+    logger.error(error);
+
+    res.status(400).json({
+      message: "Update failed",
+    });
   }
 };
 
